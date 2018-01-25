@@ -34,6 +34,13 @@ tokens = (
 
 # Regular expression rules for tokens
 
+CONCENTRATION = r'[0-9]+(mM|M)'
+@TOKEN(CONCENTRATION)
+def t_CONCENTRATION(t):
+    r'[0-9]+(mM|M)'
+    return t
+
+
 INTEGER = r'[0-9]+'
 @TOKEN(INTEGER)
 def t_INTEGER(t):
@@ -53,13 +60,6 @@ VOLUME = r'(mL|L)'
 @TOKEN(VOLUME)
 def t_VOLUME(t):
     r'(mL|L)'
-    return t
-
-
-CONCENTRATION = r'(mM|M)'
-@TOKEN(CONCENTRATION)
-def t_CONCENTRATION(t):
-    r'(mM|M)'
     return t
 
 
@@ -99,11 +99,11 @@ def p_compound(p):
         p[0] = p[1]
      
 def p_concentration(p):
-    'concentration : INTEGER CONCENTRATION'
-    if p[2] == 'M':
-        p[0] = p[1]
-    elif p[2] == 'mM':
-        p[0] = float(p[1] / 1000.) 
+    'concentration : CONCENTRATION'
+    if p[1][-2] == 'm':
+        p[0] = float(p[1][:len(p[1])-2] / 1000.)
+    elif p[1][-1] == 'M':
+        p[0] = float(p[1][:len(p[1])-1])
     else:
         print('man what the fuck kinda concentration is that, use M or mM my dude')
         sys.exit(1)
